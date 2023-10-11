@@ -18,7 +18,7 @@ export class CreatePollDto {
 export class JoinPollDto {
   @IsString()
   @Length(6, 6)
-  pollId: string;
+  pollID: string;
 
   @IsString()
   @Length(1, 25)
