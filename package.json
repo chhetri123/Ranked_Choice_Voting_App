@@ -5,7 +5,8 @@
   "main": "index.js",
   "workspaces": [
     "client",
-    "server"
+    "server",
+    "shared"
   ],
   "scripts": {
     "docker:compose": "docker-compose up -d",
@@ -26,12 +27,8 @@
     "nestjs",
     "socketjs"
   ],
-  "author": "Jacob Goodwin",
+  "author": "Manish Chhetri",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/JacobSNGoodwin/ranker/issues"
-  },
-  "homepage": "https://github.com/JacobSNGoodwin/ranker#readme",
   "devDependencies": {
     "@types/webpack": "^5.28.0",
     "concurrently": "^7.0.0",
