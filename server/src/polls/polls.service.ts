@@ -2,12 +2,31 @@ import { Injectable, Logger } from '@nestjs/common';
 import { CreatePollFields, ReJoinPollFields, JoinPollFields } from './types';
 import { createPollID, createUserID } from 'src/ids';
 import { PollsRepository } from './polls.repository';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class PollsService {
   private readonly logger = new Logger(PollsService.name);
-  constructor(private readonly pollsRepository: PollsRepository) {}
+  constructor(
+    private readonly pollsRepository: PollsRepository,
+    private readonly jwtService: JwtService,
+  ) {}
 
+  async getSignedToken(pollID: string, name: string, userID: string) {
+    this.logger.debug(`Creating token string for p
+    llID : ${pollID} and userID : ${userID}`);
+
+    const signedString = this.jwtService.sign(
+      {
+        pollID,
+        name,
+      },
+      {
+        subject: userID,
+      },
+    );
+    return signedString;
+  }
   async createPoll(fields: CreatePollFields) {
     const userID = createUserID();
     const pollID = createPollID();
@@ -17,8 +36,11 @@ export class PollsService {
       userID,
       pollID,
     });
+
+    const signedToken = await this.getSignedToken(pollID, fields.name, userID);
     return {
       poll: createdPoll,
+      accessToken: signedToken,
     };
   }
 
@@ -27,10 +49,15 @@ export class PollsService {
     this.logger.debug(`
     Fetching poll with ID  for the user ${userID}
     `);
-    const joinPoll = await this.pollsRepository.getPoll(fields.pollID);
-
+    const joinedPoll = await this.pollsRepository.getPoll(fields.pollID);
+    const joinedToken = await this.getSignedToken(
+      joinedPoll.id,
+      fields.name,
+      userID,
+    );
     return {
-      poll: joinPoll,
+      poll: joinedPoll,
+      accessToken: joinedToken,
     };
   }
   async rejoinPoll(fields: ReJoinPollFields) {
