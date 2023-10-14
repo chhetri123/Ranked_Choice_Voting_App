@@ -6,10 +6,11 @@ import { PollsService } from './polls.service';
 import { redisModule } from 'src/module.config';
 import { PollsRepository } from './polls.repository';
 import { jwtModule } from 'src/module.config';
+import { PollGateway } from './polls.gateway';
 
 @Module({
   imports: [ConfigModule, redisModule, jwtModule],
   controllers: [PollsController],
-  providers: [PollsService, PollsRepository],
+  providers: [PollsService, PollsRepository, PollGateway],
 })
 export class PollModule {}
