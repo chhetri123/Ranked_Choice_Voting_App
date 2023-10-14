@@ -81,19 +81,19 @@ export class PollsRepository {
       `Attemping to addParticipant with userId/name: ${userID}/${name} to poll ${pollID}`,
     );
     const key = `polls:${pollID}`;
-    const participantID = `participants:${userID}`;
+    const participantPath = `.participants.${userID}`;
 
     try {
+      await this.redisClient.send_command(
+        'JSON.SET',
+        key,
+        participantPath,
+        JSON.stringify(name),
+      );
       const pollJSON = await this.redisClient.send_command(
         'JSON.GET',
         key,
         '.',
-      );
-      await this.redisClient.send_command(
-        'JSON.SET',
-        key,
-        participantID,
-        JSON.stringify(name),
       );
       const poll = JSON.parse(pollJSON) as Poll;
 
