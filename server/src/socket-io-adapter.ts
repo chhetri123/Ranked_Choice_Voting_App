@@ -1,7 +1,9 @@
 import { INestApplicationContext, Logger } from '@nestjs/common';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import { ConfigService } from '@nestjs/config';
-import { ServerOptions } from 'socket.io';
+import { Server, ServerOptions } from 'socket.io';
+import { JwtService } from '@nestjs/jwt';
+import { SocketWithAuth } from './polls/types';
 
 export class SocketIOAdapter extends IoAdapter {
   private readonly logger = new Logger(SocketIOAdapter.name);
@@ -30,8 +32,28 @@ export class SocketIOAdapter extends IoAdapter {
       ...options,
       cors,
     };
+    const jwtService = this.app.get(JwtService);
 
     // we need to return this, even though the signature says it returns void
-    return super.createIOServer(port, optionsWithCORS);
+    const server: Server = super.createIOServer(port, optionsWithCORS);
+    server.of('polls').use(createTokenMiddleware(jwtService, this.logger));
+    return server;
   }
 }
+
+const createTokenMiddleware =
+  (jwtService: JwtService, Logger: Logger) =>
+  (socket: SocketWithAuth, next) => {
+    const token =
+      socket.handshake.auth.token || socket.handshake.headers['token'];
+    Logger.debug(`Validating auth token before connection :${token}`);
+    try {
+      const playlaod = jwtService.verify(token);
+      socket.userID = playlaod.sub;
+      socket.pollID = playlaod.pollID;
+      socket.name = playlaod.name;
+      next();
+    } catch {
+      next(new Error('Forbidden. Invalid auth token'));
+    }
+  };
