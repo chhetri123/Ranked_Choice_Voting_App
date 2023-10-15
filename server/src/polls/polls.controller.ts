@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { CreatePollDto, JoinPollDto } from './dtos';
 import { PollsService } from './polls.service';
-import { ControllerAuthGuard } from './controller-auth,guard';
+import { ControllerAuthGuard } from './controller-auth.guard';
 import { RequestWithAuth } from './types';
 
 @Controller('polls')
