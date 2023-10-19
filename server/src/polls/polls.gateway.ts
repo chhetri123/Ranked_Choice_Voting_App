@@ -1,4 +1,10 @@
-import { Logger, UsePipes, ValidationPipe } from '@nestjs/common';
+import {
+  BadRequestException,
+  Logger,
+  UseFilters,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import {
   OnGatewayInit,
   WebSocketGateway,
@@ -6,13 +12,15 @@ import {
   OnGatewayDisconnect,
   WebSocketServer,
   SubscribeMessage,
-  WsException,
 } from '@nestjs/websockets';
 import { PollsService } from './polls.service';
 import { Namespace } from 'socket.io';
 import { SocketWithAuth } from './types';
+import { WsBadRequestException } from 'src/exception/ws-exception';
+import { WsCatchAllFilter } from 'src/exception/ws-catch-all-filter';
 
 @UsePipes(new ValidationPipe())
+@UseFilters(new WsCatchAllFilter())
 @WebSocketGateway({
   namespace: 'polls',
 })
@@ -46,6 +54,6 @@ export class PollGateway
   }
   @SubscribeMessage('test')
   async test() {
-    throw new WsException({ field: 'test', message: 'Your message ' });
+    throw new BadRequestException('Test Error');
   }
 }
