@@ -90,4 +90,8 @@ export class PollsService {
       return this.pollsRepository.removeParticipant(pollID, userID);
     }
   }
+
+  async getPoll(pollID: string): Promise<Poll | null> {
+    return this.pollsRepository.getPoll(pollID);
+  }
 }
