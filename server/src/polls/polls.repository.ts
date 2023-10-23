@@ -21,6 +21,7 @@ export class PollsRepository {
     this.ttl = configService.get('POLL_DURATION');
   }
 
+  // Create Poll
   async createPoll({
     pollID,
     topic,
@@ -62,6 +63,7 @@ export class PollsRepository {
     }
   }
 
+  // GET Polls
   async getPoll(pollID: string): Promise<Poll | null> {
     this.logger.log(`Getting poll ${pollID}`);
     const key = `polls:${pollID}`;
@@ -79,6 +81,7 @@ export class PollsRepository {
     }
   }
 
+  // Add Participant to poll
   async addParticipant({
     pollID,
     userID,
@@ -107,6 +110,7 @@ export class PollsRepository {
     }
   }
 
+  // Removing Participant
   async removeParticipant(pollID: string, userID: string): Promise<Poll> {
     this.logger.log(`removing userID:${userID} from pollID:${pollID}`);
 
@@ -124,6 +128,7 @@ export class PollsRepository {
     }
   }
 
+  // Adding Nominations
   async addNomination({
     pollID,
     nominationID,
@@ -154,6 +159,7 @@ export class PollsRepository {
     }
   }
 
+  // Removing Nomination
   async removeNomination(pollID: string, nominationID: string): Promise<Poll> {
     const key = `polls:${pollID}`;
     const nominationPath = `.nominations.${nominationID}`;
