@@ -30,6 +30,11 @@ export type RemoveParticipantFields = {
   pollID: string;
   userID: string;
 };
+export type AddNominationFields = {
+  pollID: string;
+  userID: string;
+  text: string;
+};
 
 // repository Types
 export type CreatePollData = {
