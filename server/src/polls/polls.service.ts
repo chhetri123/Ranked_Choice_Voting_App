@@ -13,6 +13,7 @@ import { createPollID, createUserID, createNominationID } from 'src/ids';
 import { PollsRepository } from './polls.repository';
 import { JwtService } from '@nestjs/jwt';
 import { Poll } from 'shared';
+import getResult from './getResult';
 
 @Injectable()
 export class PollsService {
@@ -132,5 +133,21 @@ export class PollsService {
       );
     }
     return this.pollsRepository.addParticipantRanking(rankingData);
+  }
+
+  async computeResult(pollID: string): Promise<Poll> {
+    const poll = await this.pollsRepository.getPoll(pollID);
+    const results = getResult(
+      poll.rankings,
+      poll.nominations,
+      poll.votesPerVoter,
+    );
+    results;
+
+    return this.pollsRepository.addResults(pollID, results);
+  }
+
+  async cancelPoll(pollID: string): Promise<void> {
+    await this.pollsRepository.deletePoll(pollID);
   }
 }
