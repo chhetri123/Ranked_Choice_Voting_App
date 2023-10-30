@@ -5,7 +5,6 @@ import {
   JoinPollFields,
   AddParticipantFields,
   RemoveParticipantFields,
-  AddNominationData,
   AddNominationFields,
   SubmitRankingFields,
 } from './types';

@@ -42,7 +42,7 @@ export class PollsRepository {
       adminID: userID,
       hasStarted: false,
       rankings: {},
-      results: {},
+      results: [],
     };
     this.logger.log(
       `Creating new poll ${JSON.stringify(initialPoll, null, 2)} with TTL ${

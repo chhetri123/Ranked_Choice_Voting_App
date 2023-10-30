@@ -1,8 +1,8 @@
-import { Nomination, Rankings, Results } from 'shared';
+import { Nominations, Rankings, Results } from 'shared';
 
 export default (
   rankings: Rankings,
-  nominations: Nomination,
+  nominations: Nominations,
   votesPerVoter: number,
 ): Results => {
   const scores: { [nominationID: string]: number } = {};
