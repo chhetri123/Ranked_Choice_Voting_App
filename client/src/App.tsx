@@ -7,6 +7,7 @@ import './index.css';
 import Pages from './Pages';
 import { actions, state } from './state';
 import { getTokenPayload } from './util';
+import SnackBar from './components/ui/SnackBar';
 
 devtools(state, 'app state');
 const App: React.FC = () => {
@@ -49,6 +50,18 @@ const App: React.FC = () => {
   return (
     <>
       <Loader isLoading={currentState.isLoading} color="orange" width={120} />
+      {currentState.wsErrors.map((error) => (
+        <SnackBar
+          key={error.id}
+          type="error"
+          title={error.type}
+          message={error.message}
+          show={true}
+          onClose={() => actions.removeWsError(error.id)}
+          autoCloseDuration={5000}
+        />
+      ))}
+
       <Pages />
     </>
   );
