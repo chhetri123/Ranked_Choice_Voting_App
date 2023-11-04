@@ -2,14 +2,14 @@ import React, { useEffect } from 'react';
 import { useSnapshot } from 'valtio';
 import { devtools } from 'valtio/utils';
 import Loader from './components/ui/Loader';
+import SnackBar from './components/ui/SnackBar';
 
 import './index.css';
 import Pages from './Pages';
 import { actions, state } from './state';
 import { getTokenPayload } from './util';
-import SnackBar from './components/ui/SnackBar';
 
-devtools(state, 'app state');
+devtools(state, { name: 'app state' });
 const App: React.FC = () => {
   const currentState = useSnapshot(state);
 
@@ -46,6 +46,7 @@ const App: React.FC = () => {
     // socket initialization on server sends updated poll to the client
     actions.initializeSocket();
   }, []);
+
   useEffect(() => {
     console.log('App useEffect - check current participant');
     const myID = currentState.me?.id;
@@ -73,7 +74,6 @@ const App: React.FC = () => {
           autoCloseDuration={5000}
         />
       ))}
-
       <Pages />
     </>
   );

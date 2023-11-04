@@ -58,7 +58,7 @@ const Join: React.FC = () => {
           <div className="text-center w-full">
             <input
               maxLength={6}
-              onChange={(e) => setPollID(e.target.value)}
+              onChange={(e) => setPollID(e.target.value.toUpperCase())}
               className="box info w-full"
               autoCapitalize="characters"
               style={{ textTransform: 'uppercase' }}
