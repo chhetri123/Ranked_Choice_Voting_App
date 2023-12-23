@@ -1,7 +1,7 @@
 import { customAlphabet, nanoid } from 'nanoid';
 
 export const createPollID = customAlphabet(
-  '0123456789aABCDEFGHIJKLMNOPQRSTUVWXYZ',
+  '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ',
   6,
 );
 

@@ -1,9 +1,8 @@
 import { Request } from 'express';
-import { Nomination } from 'shared';
+import { Nomination } from 'shared/poll-types';
 import { Socket } from 'socket.io';
 
-// Service Types
-
+// service types
 export type CreatePollFields = {
   topic: string;
   votesPerVoter: number;
@@ -15,7 +14,7 @@ export type JoinPollFields = {
   name: string;
 };
 
-export type ReJoinPollFields = {
+export type RejoinPollFields = {
   pollID: string;
   userID: string;
   name: string;
@@ -26,23 +25,20 @@ export type AddParticipantFields = {
   userID: string;
   name: string;
 };
-export type RemoveParticipantFields = {
-  pollID: string;
-  userID: string;
-};
+
 export type AddNominationFields = {
   pollID: string;
   userID: string;
   text: string;
 };
 
-export type SubmitRankingFields = {
+export type SubmitRankingsFields = {
   pollID: string;
   userID: string;
   rankings: string[];
 };
 
-// repository Types
+// repository types
 export type CreatePollData = {
   pollID: string;
   topic: string;
@@ -67,8 +63,8 @@ export type AddParticipantRankingsData = {
   userID: string;
   rankings: string[];
 };
-// Guard Types
 
+// guard types
 export type AuthPayload = {
   userID: string;
   pollID: string;

@@ -1,8 +1,8 @@
 import { INestApplicationContext, Logger } from '@nestjs/common';
-import { IoAdapter } from '@nestjs/platform-socket.io';
 import { ConfigService } from '@nestjs/config';
-import { Server, ServerOptions } from 'socket.io';
 import { JwtService } from '@nestjs/jwt';
+import { IoAdapter } from '@nestjs/platform-socket.io';
+import { Server, ServerOptions } from 'socket.io';
 import { SocketWithAuth } from './polls/types';
 
 export class SocketIOAdapter extends IoAdapter {
@@ -20,7 +20,7 @@ export class SocketIOAdapter extends IoAdapter {
     const cors = {
       origin: [
         `http://localhost:${clientPort}`,
-        `/^http:\/\/192\.168\.1\.([1-9]|[1-9]\d):${clientPort}$/`,
+        new RegExp(`/^http:\/\/192\.168\.1\.([1-9]|[1-9]\d):${clientPort}$/`),
       ],
     };
 
@@ -32,28 +32,32 @@ export class SocketIOAdapter extends IoAdapter {
       ...options,
       cors,
     };
-    const jwtService = this.app.get(JwtService);
 
-    // we need to return this, even though the signature says it returns void
+    const jwtService = this.app.get(JwtService);
     const server: Server = super.createIOServer(port, optionsWithCORS);
+
     server.of('polls').use(createTokenMiddleware(jwtService, this.logger));
+
     return server;
   }
 }
 
 const createTokenMiddleware =
-  (jwtService: JwtService, Logger: Logger) =>
+  (jwtService: JwtService, logger: Logger) =>
   (socket: SocketWithAuth, next) => {
+    // for Postman testing support, fallback to token header
     const token =
       socket.handshake.auth.token || socket.handshake.headers['token'];
-    Logger.debug(`Validating auth token before connection :${token}`);
+
+    logger.debug(`Validating auth token before connection: ${token}`);
+
     try {
-      const playlaod = jwtService.verify(token);
-      socket.userID = playlaod.sub;
-      socket.pollID = playlaod.pollID;
-      socket.name = playlaod.name;
+      const payload = jwtService.verify(token);
+      socket.userID = payload.sub;
+      socket.pollID = payload.pollID;
+      socket.name = payload.name;
       next();
     } catch {
-      next(new Error('Forbidden. Invalid auth token'));
+      next(new Error('FORBIDDEN'));
     }
   };
