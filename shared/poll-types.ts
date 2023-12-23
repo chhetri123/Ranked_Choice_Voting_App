@@ -1,18 +1,26 @@
-type ParticipationID = string;
+export type Participants = {
+  [participantID: string]: string;
+}
+
+export type Nomination = {
+  userID: string;
+  text: string;
+}
+
 type NominationID = string;
 
-export type Participants = {
-  [participantID: ParticipationID]: string;
-};
+export type Nominations = {
+  [nominationID: NominationID]: Nomination;
+}
 
 export type Rankings = {
   [userID: string]: NominationID[];
 };
 
 export type Results = Array<{
-  nominationID: NominationID;
-  nominationText: string;
-  score: number;
+  nominationID: NominationID,
+  nominationText: string,
+  score: number,
 }>;
 
 export type Poll = {
@@ -25,13 +33,4 @@ export type Poll = {
   rankings: Rankings;
   results: Results;
   hasStarted: boolean;
-};
-
-export type Nomination = {
-  userID: string;
-  text: string;
-};
-
-export type Nominations = {
-  [nominationID: NominationID]: Nomination;
-};
+}
