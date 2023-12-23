@@ -1,5 +1,5 @@
 {
-  "name": "ranker-course",
+  "name": "voting-ranker-course",
   "version": "0.0.1",
   "description": "Make decisions with friends via ranked voting!",
   "main": "index.js",
@@ -16,10 +16,6 @@
     "storybook": "npm run storybook --workspace=client",
     "stop": "docker-compose down",
     "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/JacobSNGoodwin/ranker.git"
   },
   "keywords": [
     "ts",
