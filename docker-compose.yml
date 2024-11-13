@@ -1,11 +1,46 @@
-version: '3.8'
+version: "3.8"
 
 services:
-  redis:
-    image: 'redislabs/rejson:2.0.0'
+  client:
+    build:
+      context: .
+      dockerfile: client/Dockerfile
     ports:
-      - '6379:6379'
+      - "8080:8080"
     volumes:
-      - 'redisdata:/data'
+      - ./client:/app/client
+      - ./shared:/app/shared
+    depends_on:
+      - server
+    networks:
+      - app-network
+
+  server:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./server:/app/server
+      - ./shared:/app/shared
+    depends_on:
+      - redis
+    networks:
+      - app-network
+
+  redis:
+    image: "redis/redis-stack:latest"
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
 volumes:
   redisdata:

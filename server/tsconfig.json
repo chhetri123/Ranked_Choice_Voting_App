@@ -14,5 +14,7 @@
     "paths": {
       "@nestjs/common": ["@nestjs/common/"]
     },
+    "lib": ["es2017"],
+    "skipLibCheck": true
   }
 }
