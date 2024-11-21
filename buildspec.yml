@@ -1,0 +1,13 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 020493826288.dkr.ecr.ap-south-1.amazonaws.com
+  build:
+    commands:
+      - docker build -t real_time_voting .
+      - docker tag real_time_voting:latest 020493826288.dkr.ecr.ap-south-1.amazonaws.com/real_time_voting:latest
+  post_build:
+    commands:
+      - docker push 020493826288.dkr.ecr.ap-south-1.amazonaws.com/real_time_voting:latest

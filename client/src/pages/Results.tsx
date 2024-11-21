@@ -11,68 +11,127 @@ export const Results: React.FC = () => {
 
   return (
     <>
-      <div className="mx-auto flex flex-col w-full justify-between items-center h-full max-w-sm">
-        <div className="w-full">
-          <h1 className="text-center mt-12 mb-4">Results</h1>
-          {poll?.results.length ? (
-            <ResultCard results={poll?.results} />
-          ) : (
-            <p className="text-center text-xl">
-              <span className="text-orange-600">{rankingsCount}</span> of{' '}
-              <span className="text-purple-600">{participantCount}</span>{' '}
-              participants have voted
-            </p>
-          )}
+      <div className="w-full px-4 py-6">
+        {/* Topic Header */}
+        <div className="mb-8 text-center">
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">
+            {poll?.topic}
+          </h1>
+          <div className="text-gray-500">Poll Results</div>
         </div>
-        <div className="flex flex-col justify-center">
-          {isAdmin && !poll?.results.length && (
-            <>
-              <button
-                className="box btn-orange my-2"
-                onClick={() => setIsConfirmationOpen(true)}
-              >
-                End Poll
-              </button>
-            </>
-          )}
-          {!isAdmin && !poll?.results.length && (
-            <div className="my-2 italic">
-              Waiting for Admin,{' '}
-              <span className="font-semibold">
-                {poll?.participants[poll?.adminID]}
-              </span>
-              , to finalize the poll.
+
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+          {/* Main Content */}
+          <div className="lg:col-span-3">
+            <div className="bg-white rounded-xl shadow-sm p-8">
+              <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center gap-4">
+                  <span className="text-xl font-semibold text-gray-700">
+                    Rankings
+                  </span>
+                  {!!poll?.results.length && (
+                    <span className="px-3 py-1 bg-purple-100 text-purple-600 text-sm font-medium rounded-full">
+                      Final Results
+                    </span>
+                  )}
+                </div>
+                {!!poll?.results.length && (
+                  <button
+                    className="px-6 py-2 bg-purple-500 hover:bg-purple-600 text-white font-medium rounded-lg transition-colors"
+                    onClick={() => setIsLeavePollOpen(true)}
+                  >
+                    Leave Poll
+                  </button>
+                )}
+              </div>
+
+              {poll?.results.length ? (
+                <ResultCard results={poll?.results} />
+              ) : (
+                <div className="bg-purple-50 rounded-xl p-8">
+                  <div className="text-center space-y-4">
+                    <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-purple-100 mb-4">
+                      <span className="text-3xl font-bold text-purple-600">
+                        {rankingsCount}/{participantCount}
+                      </span>
+                    </div>
+                    <p className="text-gray-600 text-lg">
+                      participants have submitted their votes
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {isAdmin && !poll?.results.length && (
+                <div className="mt-8 flex justify-center">
+                  <button
+                    className="px-8 py-3 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg transition-colors shadow-sm hover:shadow-md"
+                    onClick={() => setIsConfirmationOpen(true)}
+                  >
+                    End Poll & Calculate Results
+                  </button>
+                </div>
+              )}
             </div>
-          )}
-          {!!poll?.results.length && (
-            <button
-              className="box btn-purple my-2"
-              onClick={() => setIsLeavePollOpen(true)}
-            >
-              Leave Poll
-            </button>
-          )}
+          </div>
+
+          {/* Participants Sidebar */}
+          <div className="lg:col-span-2">
+            <div className="bg-white rounded-xl shadow-sm overflow-hidden sticky top-4">
+              <div className="p-6 bg-gray-50 border-b">
+                <h2 className="text-xl font-semibold text-gray-800 flex items-center gap-2">
+                  <span>Participants</span>
+                  <span className="px-2.5 py-0.5 bg-purple-100 text-purple-600 text-sm font-medium rounded-full">
+                    {participantCount}
+                  </span>
+                </h2>
+              </div>
+              <div className="divide-y max-h-[calc(100vh-300px)] overflow-y-auto">
+                {Object.entries(poll?.participants || {}).map(([id, name]) => (
+                  <div
+                    key={id}
+                    className="p-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                  >
+                    <span className="text-gray-700 font-medium">{name}</span>
+                    {id === poll?.adminID && (
+                      <span className="px-3 py-1 text-sm bg-orange-100 text-orange-600 rounded-full font-medium">
+                        Admin
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {!isAdmin && !poll?.results.length && (
+              <div className="mt-4 p-4 bg-gray-50 rounded-lg text-gray-600 text-sm text-center">
+                Waiting for Admin{' '}
+                <span className="font-semibold text-gray-700">
+                  {poll?.participants[poll?.adminID]}
+                </span>{' '}
+                to finalize the poll
+              </div>
+            )}
+          </div>
         </div>
       </div>
-      {isAdmin && (
-        <ConfirmationDialog
-          message="Are you sure close the poll and calculate the results?"
-          showDialog={isConfirmationOpen}
-          onCancel={() => setIsConfirmationOpen(false)}
-          onConfirm={() => {
-            actions.closePoll();
-            setIsConfirmationOpen(false);
-          }}
-        />
-      )}
-      {isLeavePollOpen && (
-        <ConfirmationDialog
-          message="You'll lose ya results. Dat alright?"
-          showDialog={isLeavePollOpen}
-          onCancel={() => setIsLeavePollOpen(false)}
-          onConfirm={() => actions.startOver()}
-        />
-      )}
+
+      <ConfirmationDialog
+        message="Are you sure you want to close the poll and calculate the results?"
+        showDialog={isConfirmationOpen && isAdmin}
+        onCancel={() => setIsConfirmationOpen(false)}
+        onConfirm={() => {
+          actions.closePoll();
+          setIsConfirmationOpen(false);
+        }}
+      />
+
+      <ConfirmationDialog
+        message="Are you sure you want to leave? You will lose access to the results."
+        showDialog={isLeavePollOpen}
+        onCancel={() => setIsLeavePollOpen(false)}
+        onConfirm={() => actions.startOver()}
+      />
     </>
   );
 };

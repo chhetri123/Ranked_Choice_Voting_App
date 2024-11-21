@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: real_time_voting
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: real_time_voting
+  template:
+    metadata:
+      labels:
+        app: real_time_voting
+    spec:
+      containers:
+        - name: server
+          image: 020493826288.dkr.ecr.ap-south-1.amazonaws.com/real_time_voting:latest:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: REDIS_HOST
+              value: redis-master
+            - name: REDIS_PORT
+              value: "6379"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
